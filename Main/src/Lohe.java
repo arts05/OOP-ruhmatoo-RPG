@@ -1,4 +1,5 @@
 public class Lohe {
+    // Lohe eri kehaosad on eraldi objektid
     private KehaOsa pea;
     private KehaOsa torso;
     private KehaOsa vasakTiib;
@@ -6,11 +7,15 @@ public class Lohe {
     private KehaOsa paremJalg;
     private KehaOsa vasakJalg;
 
+    // Kas lohe hetkel lendab
     private boolean lendab;
+    // Viha mõjutab tule hetimise tõenäosust
     private int viha;
+    // Kui jalg hävineb, sunnime lohe järgmisel käigul kohe leeki kasutama
     private boolean sunniLeegigaRünnak;
 
     public Lohe() {
+        // Loome kõik kehaosad koos nende algse HP-ga
         pea = new KehaOsa("Pea", 80);
         torso = new KehaOsa("Torso", 150);
         vasakTiib = new KehaOsa("Vasak tiib", 50);
@@ -18,12 +23,20 @@ public class Lohe {
         vasakJalg = new KehaOsa("Vasak jalg", 40);
         paremJalg = new KehaOsa("Parem jalg", 40);
 
+        // Lohe algses saab lennata
         lendab = true;
+
         viha = 0;
         sunniLeegigaRünnak = false;
     }
 
     public boolean kasElus() {
+        /**
+         * Lohe sureb, kui:
+         * 1) mõlemad jalad hävitatud
+         * 2) pea on hävitatud
+         * 3) torso on hävitatud
+         */
         boolean kasJaladLäinud = vasakJalg.hävitatud() && paremJalg.hävitatud();
         boolean peaLäinud = pea.hävitatud();
         boolean torsoLäinud = torso.hävitatud();
@@ -37,11 +50,12 @@ public class Lohe {
                 " | Keha: " + torso.getHp() + "/" + torso.getMaxHp());
         System.out.println("Vasak tiib: " + vasakTiib.getHp() + "/" + vasakTiib.getMaxHp() +
                 " | Parem tiib: " + paremTiib.getHp() + "/" + paremTiib.getMaxHp());
-        System.out.println("Vasak jalg: " vasakJalg.getHp() + "/" + vasakJalg.getMaxHp() +
+        System.out.println("Vasak jalg: " + vasakJalg.getHp() + "/" + vasakJalg.getMaxHp() +
                 " | Parem jalg: " + paremJalg.getHp() + "/" + paremJalg.getMaxHp());
     }
 
     public boolean kasLendab() {
+        // Lohe saab ainult lennata juhul, kui mõlemad tiivad on alles
         return !vasakTiib.hävitatud() && !paremTiib.hävitatud();
     }
 
@@ -53,18 +67,22 @@ public class Lohe {
     }
 
     public LoheTegevus valiTegevus() {
+        // kui tiivad on hävitatud, siis enam lennata ei saa.
         if (!kasLendab()) {
             lendab = false;
         }
 
+        // Kui eelenvalt on sunniLeegigaRünnak = true, siis kohe kasutab leeki.
         if (sunniLeegigaRünnak) {
             sunniLeegigaRünnak = false;
+            // Saab leeki ainult kasutada siis, kui lendab
             if (lendab) {
                 return LoheTegevus.heidaLeeki();
             }
         }
 
         if (lendab) {
+            // Tõenäosus kasvab koos raevuga
             int leegitõenäosus = 15 + viha * 7;
             if (leegitõenäosus > 80) {
                 leegitõenäosus = 80;
@@ -73,11 +91,14 @@ public class Lohe {
             int veereta = Täring.veeretaProtsent();
 
             if (veereta <= leegitõenäosus) {
+                // Tagastame heidaLeeki objekti
                 return LoheTegevus.heidaLeeki();
             } else {
+                // Muidu sabaga rünnak
                 return LoheTegevus.ründaSabaga();
             }
         } else {
+            // Kui lohe on maas, teeb ta kas jala- või sabarünnaku
             if (vasakJalg.hävitatud() && paremJalg.hävitatud()) {
                 return LoheTegevus.ründaSabaga();
             }
@@ -92,6 +113,10 @@ public class Lohe {
     }
 
     public int veeretaRünnakuDamage(LoheTegevus lohetegevus) {
+        /**
+         * LoheTegevus ütleb meile, et mis tüüpi rünnaki on lohe valinud
+         * Selle põhjal arvutatakse välja, palju kahju lohe kangelasele teeb.
+         */
         if (lohetegevus == LoheTegevus.heidaLeeki()) {
             return Täring.veereta(18,30);
         } else if (lohetegevus == LoheTegevus.ründaSabaga()) {
@@ -104,6 +129,7 @@ public class Lohe {
     }
 
     public void lõpetaKord() {
+        // Iga vooruga raev läheb natukene alla.
         if (viha > 0) {
             viha--;
         }

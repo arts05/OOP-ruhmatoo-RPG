@@ -1,4 +1,5 @@
 public class LoheTegevus {
+    // Mida lohe järgmisena teeb
     private String nimi;
     private String vihje;
 
