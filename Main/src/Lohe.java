@@ -45,5 +45,103 @@ public class Lohe {
         return !vasakTiib.hävitatud() && !paremTiib.hävitatud();
     }
 
+    public void suurendaViha(int vihaKogus) {
+        viha += vihaKogus;
+        if (viha > 10) {
+            viha = 10;
+        }
+    }
 
+    public LoheTegevus valiTegevus() {
+        if (!kasLendab()) {
+            lendab = false;
+        }
+
+        if (sunniLeegigaRünnak) {
+            sunniLeegigaRünnak = false;
+            if (lendab) {
+                return LoheTegevus.heidaLeeki();
+            }
+        }
+
+        if (lendab) {
+            int leegitõenäosus = 15 + viha * 7;
+            if (leegitõenäosus > 80) {
+                leegitõenäosus = 80;
+            }
+
+            int veereta = Täring.veeretaProtsent();
+
+            if (veereta <= leegitõenäosus) {
+                return LoheTegevus.heidaLeeki();
+            } else {
+                return LoheTegevus.ründaSabaga();
+            }
+        } else {
+            if (vasakJalg.hävitatud() && paremJalg.hävitatud()) {
+                return LoheTegevus.ründaSabaga();
+            }
+
+            int veereta = Täring.veeretaProtsent();
+            if (veereta <= 50) {
+                return LoheTegevus.ründaJalaga();
+            } else {
+                return LoheTegevus.ründaSabaga();
+            }
+        }
+    }
+
+    public int veeretaRünnakuDamage(LoheTegevus lohetegevus) {
+        if (lohetegevus == LoheTegevus.heidaLeeki()) {
+            return Täring.veereta(18,30);
+        } else if (lohetegevus == LoheTegevus.ründaSabaga()) {
+            return Täring.veereta(12 , 22);
+        } else if (lohetegevus == LoheTegevus.ründaJalaga()) {
+            return Täring.veereta(14, 22);
+        } else {
+            return 10;
+        }
+    }
+
+    public void lõpetaKord() {
+        if (viha > 0) {
+            viha--;
+        }
+    }
+
+    public boolean lendab() {
+        return lendab;
+    }
+
+    public KehaOsa getVasakJalg() {
+        return vasakJalg;
+    }
+
+    public KehaOsa getParemJalg() {
+        return paremJalg;
+    }
+
+    public KehaOsa getParemTiib() {
+        return paremTiib;
+    }
+
+    public KehaOsa getVasakTiib() {
+        return vasakTiib;
+    }
+
+    public KehaOsa getTorso() {
+        return torso;
+    }
+
+    public KehaOsa getPea() {
+        return pea;
+    }
+
+    public void setLendab(boolean lendab) {
+        this.lendab = lendab;
+    }
+
+    public void setSunniLeegigaRünnak(boolean sunniLeegigaRünnak) {
+        this.sunniLeegigaRünnak = sunniLeegigaRünnak;
+    }
 }

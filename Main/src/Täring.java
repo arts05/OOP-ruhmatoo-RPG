@@ -7,7 +7,7 @@ public class Täring {
         return random.nextInt(max - min + 1) + min;
     }
 
-    public static int rollPercent() {
+    public static int veeretaProtsent() {
         return veereta(1, 100);
     }
 }
