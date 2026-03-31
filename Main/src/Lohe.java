@@ -24,7 +24,7 @@ public class Lohe {
         paremJalg = new KehaOsa("Parem jalg", 40);
 
         // Lohe algses saab lennata
-        lendab = true;
+        lendab = false;
 
         viha = 0;
         sunniLeegigaRünnak = false;
@@ -54,7 +54,7 @@ public class Lohe {
                 " | Parem jalg: " + paremJalg.getHp() + "/" + paremJalg.getMaxHp());
     }
 
-    public boolean kasLendab() {
+    public boolean saabLennata() {
         // Lohe saab ainult lennata juhul, kui mõlemad tiivad on alles
         return !vasakTiib.hävitatud() && !paremTiib.hävitatud();
     }
@@ -68,9 +68,11 @@ public class Lohe {
 
     public LoheTegevus valiTegevus() {
         // kui tiivad on hävitatud, siis enam lennata ei saa.
-        if (!kasLendab()) {
+        if (!saabLennata()) {
             lendab = false;
         }
+
+        uuendaLennuSeis();
 
         // Kui eelenvalt on sunniLeegigaRünnak = true, siis kohe kasutab leeki.
         if (sunniLeegigaRünnak) {
@@ -137,6 +139,45 @@ public class Lohe {
 
     public boolean lendab() {
         return lendab;
+    }
+
+    public void uuendaLennuSeis() {
+        // Kui tiivad katki, siis lennata ei saa
+        if (!saabLennata()) {
+            lendab = false;
+            return;
+        }
+
+        int täring = Täring.veeretaProtsent();
+
+        if (!lendab) {
+            // Lohe on maas
+            // Mida vihasem ta on, seda suurem tõenäosus õhtu tõusta
+
+            int õhtuTõusmiseProtsent = 15 + viha*6;
+
+            if (õhtuTõusmiseProtsent > 75) {
+                õhtuTõusmiseProtsent = 75;
+            }
+
+            if (täring <= õhtuTõusmiseProtsent) {
+                lendab = true;
+                System.out.println("Lohe tõuseb õhku.");
+            }
+        } else {
+            // Lohe on õhus.
+            // Mida väiksem viha, seda suurem tõenäosus maanduda
+            int maandumiseTõenäosus = 60 - viha * 5;
+
+            if (maandumiseTõenäosus < 10) {
+                maandumiseTõenäosus = 10;
+            }
+
+            if (täring <= maandumiseTõenäosus) {
+                lendab = false;
+                System.out.println("Lohe maandub.");
+            }
+        }
     }
 
     public KehaOsa getVasakJalg() {

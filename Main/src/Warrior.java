@@ -1,6 +1,6 @@
 public class Warrior extends Kangelane {
     public Warrior() {
         //         nimi,            maxHp,       meleeTäpsus,   vibuTäpsus,   kaitse,   relvaNimi
-        super("rüütel Kaspar", 140, 75, 25, 6,  "Kangelase mõõk");
+        super("rüütel Kaspar", 160, 75, 25, 6,  "Kangelase mõõk");
     }
 }

@@ -150,7 +150,7 @@ public class Mäng {
             }
             // Kui tiib hävineb, kukub lohe maha
             if ((sihtmärk == lohe.getVasakTiib() || sihtmärk == lohe.getParemTiib()) && sihtmärk.hävitatud()) {
-                if (!lohe.kasLendab() && lohe.lendab()) {
+                if (!lohe.saabLennata() && lohe.lendab()) {
                     System.out.println("Sa purustasid lohe tiiva! Lohe prantsatab raskelt vastu maad ja enam ei tõuse!");
                     lohe.setLendab(false);
                 } else {

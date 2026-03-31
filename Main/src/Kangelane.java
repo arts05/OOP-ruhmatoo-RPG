@@ -106,14 +106,14 @@ public abstract class Kangelane {
 
         // Mõõk teeb natukene rohkem kahju kui vibu
         if (rünnak == Rünnak.mõõk()) {
-            damage = Täring.veereta(15, 25);
+            damage = Täring.veereta(15, 30);
         } else {
             damage = Täring.veereta(12, 20);
         }
 
         // Warrior teeb maas oleva lohe vastu mõõgaga rohkem kahju
         if (this instanceof Warrior && rünnak == Rünnak.mõõk() && !lohe.lendab()) {
-            damage += 6;
+            damage += 10;
         }
 
         // Archer teeb lendava lohe vastu vibuga rohkem kahju
