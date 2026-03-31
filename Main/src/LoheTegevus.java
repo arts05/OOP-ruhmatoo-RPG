@@ -23,4 +23,12 @@ public class LoheTegevus {
     public static LoheTegevus ründaJalaga() {
         return jalg;
     }
+
+    public String getNimi() {
+        return nimi;
+    }
+
+    public String getVihje() {
+        return vihje;
+    }
 }

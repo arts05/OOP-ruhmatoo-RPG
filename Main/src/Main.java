@@ -1,6 +1,5 @@
 public class Main {
-    static void main(String[] args) {
-        Mäng mäng = new Mäng();
+    public static void main(String[] args) {
         Mäng.start();
     }
 }

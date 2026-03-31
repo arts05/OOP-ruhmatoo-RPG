@@ -86,7 +86,7 @@ public abstract class Kangelane {
             }
         }
 
-        // Kui mängija on peidus, on palju raksem tabada
+        // Kui mängija on peidus, on palju raskem tabada
         if (peidus) {
             tõenäosus -= 10;
         }

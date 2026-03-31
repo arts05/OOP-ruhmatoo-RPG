@@ -24,6 +24,18 @@ public class KehaOsa {
         return nimi;
     }
 
+    public String getNimiOmastavas() {
+        switch (nimi) {
+            case "Pea": return "pea";
+            case "Torso": return "kere";
+            case "Vasak tiib": return "vasaku tiiva";
+            case "Parem tiib": return "parema tiiva";
+            case "Vasak jalg": return "vasaku jala";
+            case "Parem jalg": return "parema jala";
+            default: return nimi.toLowerCase();
+        }
+    }
+
     public int getMaxHp() {
         return maxHp;
     }
