@@ -41,14 +41,16 @@ public abstract class Kangelane {
         System.out.println(nimi + " | HP: " + hp + "/" + maxHp);
     }
 
-    public int tabamusTõenäosus(Rünnak rünnak, Lohe lohe, KehaOsa sihtmärk) {
+    public int tabamusTõenäosus(MängijaRünnak rünnakuInfo, Lohe lohe) {
         /**
          * Arvutab, kui suur võimalus on kangelasel pihta saada lohele
-         * 1) Rünnak - mõõk või vibu
+         * 1) rünnakuInfo - mõõk või vibu
          * 2) Lohe - Kas lendab ja millist kehaosa sihitakse
          * 3) KehaOsa - Konkreetne sihtmärk
          */
         int tõenäosus;
+        Rünnak rünnak = rünnakuInfo.getRünnak();
+        KehaOsa sihtmärk = rünnakuInfo.getSihtmärk();
 
         // Baastäpsuse arvutamine vastavalt rünnakutüübile.
         if (rünnak == Rünnak.mõõk()) {
@@ -101,8 +103,9 @@ public abstract class Kangelane {
         return tõenäosus;
     }
 
-    public int teeHaiget(Rünnak rünnak, Lohe lohe) {
+    public int teeHaiget (MängijaRünnak rünnakuInfo, Lohe lohe) {
         int damage;
+        Rünnak rünnak = rünnakuInfo.getRünnak();
 
         // Mõõk teeb natukene rohkem kahju kui vibu
         if (rünnak == Rünnak.mõõk()) {

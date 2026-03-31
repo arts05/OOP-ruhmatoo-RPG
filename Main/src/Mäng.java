@@ -92,7 +92,7 @@ public class Mäng {
             return; // Käik on tehtud
         }
 
-        // Kui valiti rünnak, määrame rünnaku tüübi vastavalt klassile
+        // Määrame rünnaku tüübi vastavalt klassile
         Rünnak valitudRünnak = (kangelane instanceof Warrior) ? Rünnak.mõõk() : Rünnak.vibu();
 
         System.out.println("\nMillist kehaosa sihid?");
@@ -118,14 +118,16 @@ public class Mäng {
             }
         }
 
-        // Kui kehaosa on juba hävitatud, läheb löök raisku
-        if (sihtmärk.hävitatud()) {
+        // Loome konteinerobjekti, mis seob relva ja sihtmärgi
+        MängijaRünnak sooritatudRünnak = new MängijaRünnak(valitudRünnak, sihtmärk);
+
+        if (sooritatudRünnak.getSihtmärk().hävitatud()) {
             System.out.println("See kehaosa on juba hävitatud! Ründasid tühja õhku.");
             return;
         }
 
         // Arvutame täpsuse ja veeretame täringut
-        int tabamusTõenäosus = kangelane.tabamusTõenäosus(valitudRünnak, lohe, sihtmärk);
+        int tabamusTõenäosus = kangelane.tabamusTõenäosus(sooritatudRünnak, lohe);
 
         if (lohe.lendab() && kangelane instanceof Warrior) {
             System.out.println("Lohe lendab ja mõõgamehena on sul keeruline talle pihta saada. Poleks tal neid tiibu...");
@@ -136,20 +138,22 @@ public class Mäng {
         System.out.println("\nSinu tabamuse tõenäosus on " + tabamusTõenäosus + "% (Täringuveeretus: " + vise + ")");
 
         if (vise <= tabamusTõenäosus) {
-            int damage = kangelane.teeHaiget(valitudRünnak, lohe);
-            sihtmärk.saaHaiget(damage);
-            lohe.suurendaViha(2); // Edukas löök vihastab lohet
+            int damage = kangelane.teeHaiget(sooritatudRünnak, lohe);
+            sooritatudRünnak.getSihtmärk().saaHaiget(damage);
+            lohe.suurendaViha(2);
 
-            System.out.println("Pihtas! Tegid " + sihtmärk.getNimiOmastavas() + " pihta " + damage + " kahju.");
+            System.out.println("Pihtas! Tegid " + sooritatudRünnak.getSihtmärk().getNimiOmastavas() + " pihta " + damage + " kahju.");
 
-            // Kui jalg hävineb, sunnime lohet järgmine kord leeki heitma
-            if ((sihtmärk == lohe.getVasakJalg() || sihtmärk == lohe.getParemJalg()) && sihtmärk.hävitatud()) {
+            // Mehaanika kontrollid kasutavad samuti objekti
+            KehaOsa tabatudOsa = sooritatudRünnak.getSihtmärk();
+
+            if ((tabatudOsa == lohe.getVasakJalg() || tabatudOsa == lohe.getParemJalg()) && tabatudOsa.hävitatud()) {
                 System.out.println("Sa hävitasid lohe jala!");
                 System.out.println("Lohe möirgab valust ja valmistub leeke sülgama!");
                 lohe.setSunniLeegigaRünnak(true);
             }
-            // Kui tiib hävineb, kukub lohe maha
-            if ((sihtmärk == lohe.getVasakTiib() || sihtmärk == lohe.getParemTiib()) && sihtmärk.hävitatud()) {
+
+            if ((tabatudOsa == lohe.getVasakTiib() || tabatudOsa == lohe.getParemTiib()) && tabatudOsa.hävitatud()) {
                 if (!lohe.saabLennata() && lohe.lendab()) {
                     System.out.println("Sa purustasid lohe tiiva! Lohe prantsatab raskelt vastu maad ja enam ei tõuse!");
                     lohe.setLendab(false);
