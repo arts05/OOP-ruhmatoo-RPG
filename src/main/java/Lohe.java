@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.Buffer;
 
 public class Lohe {
     // Lohe eri kehaosad on eraldi objektid
@@ -132,21 +131,16 @@ public class Lohe {
     }
 
     public LoheTegevus valiTegevus() {
-        // kui tiivad on hävitatud, siis enam lennata ei saa.
-        if (!saabLennata()) {
-            lendab = false;
+        if (!saabLennata()) { lendab = false; }
+
+        if (sunniLeegigaRünnak) {
+            sunniLeegigaRünnak = false;
+            // Sunnitud leegirünnak — lohe tõuseb vajadusel õhku
+            lendab = true;
+            return LoheTegevus.heidaLeeki();
         }
 
         uuendaLennuSeis();
-
-        // Kui eelenvalt on sunniLeegigaRünnak = true, siis kohe kasutab leeki.
-        if (sunniLeegigaRünnak) {
-            sunniLeegigaRünnak = false;
-            // Saab leeki ainult kasutada siis, kui lendab
-            if (lendab) {
-                return LoheTegevus.heidaLeeki();
-            }
-        }
 
         if (lendab) {
             // Tõenäosus kasvab koos raevuga

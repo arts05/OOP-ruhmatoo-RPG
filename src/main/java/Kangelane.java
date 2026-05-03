@@ -41,13 +41,15 @@ public abstract class Kangelane {
         System.out.println(nimi + " | HP: " + hp + "/" + maxHp);
     }
 
+    /**
+     * Arvutab, kui suur tõenäosus on kangelasel lohele pihta saada.
+     *
+     * @param rünnak   Relvavalik — mõõk või vibu
+     * @param lohe     Lohe olek — kas lendab, milliseid kehaosi sihitakse
+     * @param sihtmärk Konkreetne kehaosa, mida sihitakse
+     * @return Tabamustõenäosus protsendina (5–95)
+     */
     public int tabamusTõenäosus(Rünnak rünnak, Lohe lohe, KehaOsa sihtmärk) {
-        /**
-         * Arvutab, kui suur võimalus on kangelasel pihta saada lohele
-         * 1) Rünnak - mõõk või vibu
-         * 2) Lohe - Kas lendab ja millist kehaosa sihitakse
-         * 3) KehaOsa - Konkreetne sihtmärk
-         */
         int tõenäosus;
 
         // Baastäpsuse arvutamine vastavalt rünnakutüübile.
@@ -59,9 +61,9 @@ public abstract class Kangelane {
 
         // Kui lohe lendab, on vibuga kergem tabada ja mõõgaga raskem
         if (lohe.lendab()) {
-            if (rünnak == Rünnak.mõõk()) { // Kui mängija valis mõõga, kasutatakse melee täpsust
+            if (rünnak == Rünnak.mõõk()) {
                 tõenäosus -= 35;
-            } else { // ja vastupidi
+            } else {
                 tõenäosus += 10;
             }
         } else {
@@ -91,12 +93,8 @@ public abstract class Kangelane {
             tõenäosus -= 10;
         }
 
-        if (tõenäosus < 5) {
-            tõenäosus = 5;
-        }
-        if (tõenäosus > 95) {
-            tõenäosus = 95;
-        }
+        if (tõenäosus < 5)  tõenäosus = 5;
+        if (tõenäosus > 95) tõenäosus = 95;
 
         return tõenäosus;
     }
