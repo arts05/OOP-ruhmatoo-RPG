@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.Buffer;
+
 public class Lohe {
     // Lohe eri kehaosad on eraldi objektid
     private KehaOsa pea;
@@ -14,21 +20,80 @@ public class Lohe {
     // Kui jalg hävineb, sunnime lohe järgmisel käigul kohe leeki kasutama
     private boolean sunniLeegigaRünnak;
 
-    public Lohe() {
-        // Loome kõik kehaosad koos nende algse HP-ga
-        pea = new KehaOsa("Pea", 80);
-        torso = new KehaOsa("Torso", 150);
-        vasakTiib = new KehaOsa("Vasak tiib", 50);
-        paremTiib = new KehaOsa("Parem tiib", 50);
-        vasakJalg = new KehaOsa("Vasak jalg", 40);
-        paremJalg = new KehaOsa("Parem jalg", 40);
+    public Lohe(){
+        // Vaikeväärtused juhuks, kui failist lugemine ei õnnestu
+        int peaHp = 80;
+        int torsoHp = 150;
+        int vasakTiibHp = 50;
+        int paremTiibHp = 50;
+        int vasakJalgHp = 40;
+        int paremJalgHp = 40;
+        boolean algusesLendab = false;
+        int algneViha = 0;
 
-        // Lohe algses saab lennata
-        lendab = false;
+        try {
+            InputStream inputStream = getClass().getResourceAsStream("/lohe_andmed.txt");
 
-        viha = 0;
+            if (inputStream == null) {
+                throw new IOException("Faili lohe_andmed.txt ei leitud!");
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+
+            String rida;
+            while ((rida = br.readLine()) != null) {
+                rida = rida.trim();
+
+                if (rida.isEmpty()) {continue;}
+
+                String[] osad = rida.split("=");
+                if (osad.length != 2) {
+                    continue;
+                }
+
+                String võti = osad[0].trim();
+                String väärtus = osad[1].trim();
+
+                if (võti.equals("pea")) {
+                    peaHp = Integer.parseInt(väärtus);
+                } else if (võti.equals("torso")) {
+                    torsoHp = Integer.parseInt(väärtus);
+                } else if (võti.equals("vasakTiib")) {
+                    vasakTiibHp = Integer.parseInt(väärtus);
+                } else if (võti.equals("paremTiib")) {
+                    paremTiibHp = Integer.parseInt(väärtus);
+                } else if (võti.equals("vasakJalg")) {
+                    vasakJalgHp = Integer.parseInt(väärtus);
+                } else if (võti.equals("paremJalg")) {
+                    paremJalgHp = Integer.parseInt(väärtus);
+                } else if (võti.equals("lendab")) {
+                    algusesLendab = Boolean.parseBoolean(väärtus);
+                } else if (võti.equals("viha")) {
+                    algneViha = Integer.parseInt(väärtus);
+                }
+            }
+
+            br.close();
+
+        } catch (IOException e) {
+            System.out.println("Lohe andmete faili lugemisel tekkis viga. Kasutatakse vaikeväärtusi.");
+        } catch (NumberFormatException e) {
+            System.out.println("Lohe andmete failis oli vigane arv. Kasutatakse vaikeväärtusi.");
+        }
+
+        // Loome kehaosad failist saadud või vaikeväärtustega
+        pea = new KehaOsa("Pea", peaHp);
+        torso = new KehaOsa("Torso", torsoHp);
+        vasakTiib = new KehaOsa("Vasak tiib", vasakTiibHp);
+        paremTiib = new KehaOsa("Parem tiib", paremTiibHp);
+        vasakJalg = new KehaOsa("Vasak jalg", vasakJalgHp);
+        paremJalg = new KehaOsa("Parem jalg", paremJalgHp);
+
+        lendab = algusesLendab;
+        viha = algneViha;
         sunniLeegigaRünnak = false;
-    }
+
+        }
 
     public boolean kasElus() {
         /**

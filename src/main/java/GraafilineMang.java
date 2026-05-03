@@ -11,6 +11,9 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class GraafilineMang extends Application {
     private Stage stage;
 
@@ -23,6 +26,9 @@ public class GraafilineMang extends Application {
     private Label pildiPlaceholder;
     private Label tekstiKast;
     private VBox valikuteKast;
+
+    private LocalDateTime mänguAlguseAeg;
+    private int voorudeArv;
 
     @Override
     public void start(Stage stage) {
@@ -228,6 +234,9 @@ public class GraafilineMang extends Application {
     private void alustaMäng(Kangelane valitudKangelane) {
         kangelane = valitudKangelane;
         lohe = new Lohe();
+
+        mänguAlguseAeg = LocalDateTime.now();
+        voorudeArv = 1;
 
         // Lohe valib esimese tegevuse.
         // Sellet egevuse vihjet näidatakse mängijale enne tema otsust.
@@ -521,6 +530,7 @@ public class GraafilineMang extends Application {
 
         // Uuendame placeholderi vastavalt sellele, kas lohe lendab või on maas, anname lohe vihje ja näitame valikuid.
         jätka.setOnAction(e -> {
+            voorudeArv++;
             uuendaVaade(lohe.lendab() ? "LOHE LENDAB" : "LOHE MAAS");
             kirjutaTekst("Vihje: " + järgmineTegevus.getVihje());
             näitaPõhiValikud();
@@ -537,12 +547,30 @@ public class GraafilineMang extends Application {
     private void lõpetaMäng(boolean võit) {
         valikuteKast.getChildren().clear();
 
+        LocalDateTime mängulõpuAeg = LocalDateTime.now();
+
+        TulemuseKirjutamine.kijrutaTulemus(kangelane, võit, voorudeArv, mänguAlguseAeg, mängulõpuAeg);
+
         if (võit) {
             uuendaVaade("LOHE ALISTATUD");
-            kirjutaTekst("Palju õnne. Alistasid lohe ja printsess on päästetud.");
+            kirjutaTekst(
+                    "Palju õnne. Alistasid lohe ja printsess on päästetud.\n\n" +
+                            "Tulemus salvestati faili mangu_tulemused.txt.\n" +
+                            "Voorude arv: " + voorudeArv + "\n" +
+                            "Algusaeg: " + mänguAlguseAeg + "\n" +
+                            "Lõpuaeg: " + mängulõpuAeg + "\n" +
+                            "Alles jäänud HP: " + kangelane.getHp() + "/" + kangelane.getMaxHp()
+            );
         } else {
             uuendaVaade("KANGELANE LANGES");
-            kirjutaTekst("Lohe osutus liiga tugevaks. Sinu teekond lõppes siin.");
+            kirjutaTekst(
+                    "Lohe osutus liiga tugevaks. Sinu teekond lõppes siin.\n\n" +
+                            "Tulemus salvestati faili mangu_tulemused.txt.\n" +
+                            "Voorude arv: " + voorudeArv + "\n" +
+                            "Algusaeg: " + mänguAlguseAeg + "\n" +
+                            "Lõpuaeg: " + mängulõpuAeg + "\n" +
+                            "Alles jäänud HP: " + kangelane.getHp() + "/" + kangelane.getMaxHp()
+            );
         }
 
         Button menüü = new Button("Peamenüü");
