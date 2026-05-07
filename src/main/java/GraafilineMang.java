@@ -566,19 +566,13 @@ public class GraafilineMang extends Application {
             kirjutaTekst(
                     "Palju õnne. Alistasid lohe ja printsess on päästetud.\n\n" +
                     "Tulemus salvestati faili mangu_tulemused.txt.\n" +
-                    "Voorude arv: " + voorudeArv + "\n" +
-                    "Algusaeg: " + mänguAlguseAeg + "\n" +
-                    "Lõpuaeg: " + mängulõpuAeg + "\n" +
-                    "Alles jäänud HP: " + kangelane.getHp() + "/" + kangelane.getMaxHp()
+                    "Voorude arv: " + voorudeArv + "\n"
             );
         } else {
             kirjutaTekst(
                     "Lohe osutus liiga tugevaks. Sinu teekond lõppes siin.\n\n" +
                     "Tulemus salvestati faili mangu_tulemused.txt.\n" +
-                    "Voorude arv: " + voorudeArv + "\n" +
-                    "Algusaeg: " + mänguAlguseAeg + "\n" +
-                    "Lõpuaeg: " + mängulõpuAeg + "\n" +
-                    "Alles jäänud HP: " + kangelane.getHp() + "/" + kangelane.getMaxHp()
+                    "Voorude arv: " + voorudeArv + "\n"
             );
         }
 
