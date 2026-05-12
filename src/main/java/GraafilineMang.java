@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -12,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
+import javafx.scene.input.KeyEvent;
 
 import java.time.LocalDateTime;
 
@@ -118,8 +120,9 @@ public class GraafilineMang extends Application {
         introTekst.setWrapText(true);
         introTekst.setAlignment(Pos.CENTER);
 
-        Button edasi  = new Button("Edasi");
-        Button tagasi = new Button("Tagasi");
+        Button edasi  = new Button("(Enter) Edasi");
+        Button tagasi = new Button("(Esc) Tagasi");
+
         edasi.setPrefWidth(180);
         tagasi.setPrefWidth(180);
 
@@ -132,7 +135,19 @@ public class GraafilineMang extends Application {
 
         introPaneel.getChildren().addAll(pealkiri, introTekst, nupud);
         root.getChildren().add(introPaneel);
-        stage.setScene(new Scene(root, 900, 600));
+        Scene scene = new Scene(root, 900, 600);
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                e.consume();
+                näitaKlassiValik();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                e.consume();
+                näitaPeamenüü();
+            }
+        });
+
+        stage.setScene(scene);
     }
 
     /**
@@ -164,8 +179,8 @@ public class GraafilineMang extends Application {
         pealkiri.setTextFill(Color.WHITE);
         pealkiri.setFont(Font.font(30));
 
-        Button mängi = new Button("Mängi");
-        Button välju = new Button("Välju");
+        Button mängi = new Button("(1) Mängi");
+        Button välju = new Button("(2) Välju");
         mängi.setPrefWidth(180);
         välju.setPrefWidth(180);
 
@@ -175,7 +190,17 @@ public class GraafilineMang extends Application {
         menüüPaneel.getChildren().addAll(pealkiri, mängi, välju);
         root.getChildren().add(menüüPaneel);
 
-        stage.setScene(new Scene(root, 900, 600));
+        Scene scene = new Scene(root, 900, 600);
+
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.DIGIT1 || e.getCode() == KeyCode.NUMPAD1 || e.getCode() == KeyCode.ENTER) {
+                näitaIntro();
+            } else if (e.getCode() == KeyCode.DIGIT2 || e.getCode() == KeyCode.NUMPAD2 || e.getCode() == KeyCode.ESCAPE) {
+                stage.close();
+            }
+        });
+
+        stage.setScene(scene);
         stage.show();
     }
 
@@ -210,9 +235,9 @@ public class GraafilineMang extends Application {
         tekst.setTextFill(Color.WHITE);
         tekst.setFont(Font.font(26));
 
-        Button warrior = new Button("Mõõgamees");
-        Button archer  = new Button("Vibumees");
-        Button tagasi  = new Button("Tagasi");
+        Button warrior = new Button("(1) Mõõgamees");
+        Button archer  = new Button("(2) Vibumees");
+        Button tagasi  = new Button("(3 / Esc) Tagasi");
         warrior.setPrefWidth(220);
         archer.setPrefWidth(220);
         tagasi.setPrefWidth(220);
@@ -223,7 +248,22 @@ public class GraafilineMang extends Application {
 
         valikuPaneel.getChildren().addAll(tekst, warrior, archer, tagasi);
         root.getChildren().add(valikuPaneel);
-        stage.setScene(new Scene(root, 900, 600));
+        Scene scene = new Scene(root, 900, 600);
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.DIGIT1) {
+                e.consume();
+                alustaMäng(new Warrior());
+            } else if (e.getCode() == KeyCode.DIGIT2) {
+                e.consume();
+                alustaMäng(new Archer());
+            } else if (e.getCode() == KeyCode.DIGIT3 || e.getCode() == KeyCode.ESCAPE) {
+                e.consume();
+                näitaIntro();
+            }
+        });
+
+        stage.setScene(scene);
     }
 
     /**
@@ -259,34 +299,66 @@ public class GraafilineMang extends Application {
         ülemineRiba.setSpacing(250);
 
         kangelaseHpLabel = new Label();
-        loheHpLabel      = new Label();
+        loheHpLabel = new Label();
+
         kangelaseHpLabel.setTextFill(Color.WHITE);
         loheHpLabel.setTextFill(Color.WHITE);
         kangelaseHpLabel.setFont(Font.font(18));
         loheHpLabel.setFont(Font.font(18));
+
         ülemineRiba.getChildren().addAll(kangelaseHpLabel, loheHpLabel);
 
         // Spraidid
         kangelaneSprait = new ImageView();
-        loheSprait      = new ImageView();
+        loheSprait = new ImageView();
 
         kangelaneSprait.setFitHeight(260);
         kangelaneSprait.setPreserveRatio(true);
+
         loheSprait.setFitHeight(260);
         loheSprait.setPreserveRatio(true);
 
-        if (kangelaneSpraidid[0] != null) kangelaneSprait.setImage(kangelaneSpraidid[0]);
-        if (loheSpraidid[0]     != null) loheSprait.setImage(loheSpraidid[0]);
+        if (kangelaneSpraidid[0] != null) {
+            kangelaneSprait.setImage(kangelaneSpraidid[0]);
+        }
 
-        // Spraidikast — tumehall taust nagu eelmine placeholder
+        if (loheSpraidid[0] != null) {
+            loheSprait.setImage(loheSpraidid[0]);
+        }
+
+        // Välimine keskmine paneel
+        StackPane keskmine = new StackPane();
+        keskmine.setPadding(new Insets(10));
+
+        // Lahinguala, mille sees on taust ja spraidid
+        StackPane lahinguAla = new StackPane();
+        lahinguAla.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        lahinguAla.setStyle("-fx-border-color: white; -fx-border-width: 3;");
+
+        // Cave taust
+        ImageView lahinguTaust = new ImageView(
+                new Image(getClass().getResource("/cave.png").toExternalForm())
+        );
+
+        lahinguTaust.setSmooth(false);
+        lahinguTaust.setPreserveRatio(false);
+
+        // Väga oluline: pilt ei osale layout'i mõõtmete arvutuses
+        lahinguTaust.setManaged(false);
+
+        // Pilt täidab lahinguala
+        lahinguTaust.fitWidthProperty().bind(lahinguAla.widthProperty());
+        lahinguTaust.fitHeightProperty().bind(lahinguAla.heightProperty());
+
+        // Spraidid tausta peale
         HBox spraitKast = new HBox(80);
-        spraitKast.setAlignment(Pos.CENTER);
-        spraitKast.setPadding(new Insets(10));
-        spraitKast.setStyle("-fx-background-color: #3a3a3a; -fx-border-color: white; -fx-border-width: 3;");
+        spraitKast.setAlignment(Pos.BOTTOM_CENTER);
+        spraitKast.setPadding(new Insets(10, 10, 35, 10));
+        spraitKast.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         spraitKast.getChildren().addAll(kangelaneSprait, loheSprait);
 
-        StackPane keskmine = new StackPane(spraitKast);
-        keskmine.setPadding(new Insets(10));
+        lahinguAla.getChildren().addAll(lahinguTaust, spraitKast);
+        keskmine.getChildren().add(lahinguAla);
 
         // Alumine osa
         HBox alumine = new HBox(10);
@@ -314,7 +386,9 @@ public class GraafilineMang extends Application {
         root.setCenter(keskmine);
         root.setBottom(alumine);
 
-        stage.setScene(new Scene(root, 900, 600));
+        Scene scene = new Scene(root, 900, 600);
+        lisaKlaviatuurigaJuhtimine(scene);
+        stage.setScene(scene);
         uuendaHp();
     }
 
@@ -361,9 +435,9 @@ public class GraafilineMang extends Application {
     private void näitaPõhiValikud() {
         valikuteKast.getChildren().clear();
 
-        Button ründa = new Button("Ründa");
-        Button peida = new Button("Peida");
-        Button välju = new Button("Välju");
+        Button ründa = new Button("(1) Ründa");
+        Button peida = new Button("(2) Peida");
+        Button välju = new Button("(3 / Esc) Välju");
 
         seadistaNupp(ründa);
         seadistaNupp(peida);
@@ -382,14 +456,14 @@ public class GraafilineMang extends Application {
     private void näitaSihtmärgid() {
         valikuteKast.getChildren().clear();
 
-        lisaSihtmärgiNupp("Pea",         lohe.getPea());
-        lisaSihtmärgiNupp("Kere",        lohe.getTorso());
-        lisaSihtmärgiNupp("Vasak tiib",  lohe.getVasakTiib());
-        lisaSihtmärgiNupp("Parem tiib",  lohe.getParemTiib());
-        lisaSihtmärgiNupp("Vasak jalg",  lohe.getVasakJalg());
-        lisaSihtmärgiNupp("Parem jalg",  lohe.getParemJalg());
+        lisaSihtmärgiNupp("(1) Pea",         lohe.getPea());
+        lisaSihtmärgiNupp("(2) Kere",        lohe.getTorso());
+        lisaSihtmärgiNupp("(3) Vasak tiib",  lohe.getVasakTiib());
+        lisaSihtmärgiNupp("(4) Parem tiib",  lohe.getParemTiib());
+        lisaSihtmärgiNupp("(5) Vasak jalg",  lohe.getVasakJalg());
+        lisaSihtmärgiNupp("(6) Parem jalg",  lohe.getParemJalg());
 
-        Button tagasi = new Button("Tagasi");
+        Button tagasi = new Button("(Esc) Tagasi");
         seadistaNupp(tagasi);
         tagasi.setOnAction(e -> näitaPõhiValikud());
 
@@ -487,7 +561,7 @@ public class GraafilineMang extends Application {
     private void näitaJätkaLoheKäigule() {
         valikuteKast.getChildren().clear();
 
-        Button jätka = new Button("Jätka");
+        Button jätka = new Button("(Enter) Jätka");
         seadistaNupp(jätka);
         jätka.setOnAction(e -> loheRündab());
 
@@ -541,7 +615,7 @@ public class GraafilineMang extends Application {
     private void näitaJärgmineVoor() {
         valikuteKast.getChildren().clear();
 
-        Button jätka = new Button("Järgmine voor");
+        Button jätka = new Button("(Enter) Järgmine voor");
         seadistaNupp(jätka);
 
         jätka.setOnAction(e -> {
@@ -576,11 +650,11 @@ public class GraafilineMang extends Application {
             );
         }
 
-        Button menüü = new Button("Peamenüü");
+        Button menüü = new Button("(1) Peamenüü");
         seadistaNupp(menüü);
         menüü.setOnAction(e -> näitaPeamenüü());
 
-        Button välju = new Button("Välju");
+        Button välju = new Button("(2) Välju");
         seadistaNupp(välju);
         välju.setOnAction(e -> stage.close());
 
@@ -605,6 +679,59 @@ public class GraafilineMang extends Application {
 
         loheHpLabel.setText("Lohe HP kokku: " + loheHpKokku);
     }
+
+    private void lisaKlaviatuurigaJuhtimine(Scene scene) {
+        scene.setOnKeyPressed(e -> {
+            if (valikuteKast == null) {
+                return;
+            }
+
+            if (e.getCode() == KeyCode.DIGIT1) {
+                vajutaNuppu(0);
+            } else if (e.getCode() == KeyCode.DIGIT2) {
+                vajutaNuppu(1);
+            } else if (e.getCode() == KeyCode.DIGIT3) {
+                vajutaNuppu(2);
+            } else if (e.getCode() == KeyCode.DIGIT4) {
+                vajutaNuppu(3);
+            } else if (e.getCode() == KeyCode.DIGIT5) {
+                vajutaNuppu(4);
+            } else if (e.getCode() == KeyCode.DIGIT6) {
+                vajutaNuppu(5);
+            } else if (e.getCode() == KeyCode.ENTER) {
+                vajutaNuppu(0);
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                vajutaViimastNuppu();
+            }
+        });
+    }
+
+    private void vajutaNuppu(int indeks) {
+        if (valikuteKast == null) {
+            return;
+        }
+
+        if (indeks < 0 || indeks >= valikuteKast.getChildren().size()) {
+            return;
+        }
+
+        if (valikuteKast.getChildren().get(indeks) instanceof Button nupp) {
+            nupp.fire();
+        }
+    }
+
+    private void vajutaViimastNuppu() {
+        if (valikuteKast == null) {
+            return;
+        }
+
+        int viimaneIndeks = valikuteKast.getChildren().size() - 1;
+
+        if (valikuteKast.getChildren().get(viimaneIndeks) instanceof Button nupp) {
+            nupp.fire();
+        }
+    }
+
 
     private void kirjutaTekst(String tekst) {
         tekstiKast.setText(tekst);

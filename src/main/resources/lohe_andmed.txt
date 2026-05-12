@@ -1,0 +1,8 @@
+pea=80
+torso=150
+vasakTiib=50
+paremTiib=50
+vasakJalg=40
+paremJalg=40
+lendab=false
+viha=0
