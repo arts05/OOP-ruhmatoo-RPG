@@ -31,6 +31,8 @@ public class GraafilineMang extends Application {
     private Label tekstiKast;
     private VBox valikuteKast;
 
+    private ImageView lahinguTaust;
+
     // [0] passiivne, [1] mõõkarünnak, [2] viburünnak
     private final Image[] kangelaneSpraidid = new Image[3];
     // [0] passiivne, [1] leek, [2] saba, [3] jalg
@@ -336,7 +338,7 @@ public class GraafilineMang extends Application {
         lahinguAla.setStyle("-fx-border-color: white; -fx-border-width: 3;");
 
         // Cave taust
-        ImageView lahinguTaust = new ImageView(
+        lahinguTaust = new ImageView(
                 new Image(getClass().getResource("/cave.png").toExternalForm())
         );
 
@@ -637,12 +639,19 @@ public class GraafilineMang extends Application {
         TulemuseKirjutamine.kirjutaTulemus(kangelane, võit, voorudeArv, mänguAlguseAeg, mängulõpuAeg);
 
         if (võit) {
+            muudaLahinguTaust("night.png");
+            kangelaneSprait.setVisible(false);
+            loheSprait.setVisible(false);
+
             kirjutaTekst(
                     "Palju õnne. Alistasid lohe ja printsess on päästetud.\n\n" +
                     "Tulemus salvestati faili mangu_tulemused.txt.\n" +
                     "Voorude arv: " + voorudeArv + "\n"
             );
         } else {
+            muudaLahinguTaust("skull.png");
+            kangelaneSprait.setVisible(false);
+            loheSprait.setVisible(false);
             kirjutaTekst(
                     "Lohe osutus liiga tugevaks. Sinu teekond lõppes siin.\n\n" +
                     "Tulemus salvestati faili mangu_tulemused.txt.\n" +
@@ -729,6 +738,14 @@ public class GraafilineMang extends Application {
 
         if (valikuteKast.getChildren().get(viimaneIndeks) instanceof Button nupp) {
             nupp.fire();
+        }
+    }
+
+    private void muudaLahinguTaust(String failinimi) {
+        try {
+            lahinguTaust.setImage(new Image(getClass().getResource("/" + failinimi).toExternalForm()));
+        } catch (Exception e ) {
+            System.out.println("Taustapilti ei leitud!" + failinimi);
         }
     }
 
